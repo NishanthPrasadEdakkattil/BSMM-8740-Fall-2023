@@ -90,6 +90,7 @@ dplyr::filter(mets_ben,WPct<WinPct)
 ...
 
 ```{r}
+#showing the best season
 dplyr::arrange(mets_ben, WinPct)
 ```
 
@@ -109,6 +110,7 @@ print (mets_ben)
 ...
 
 ```{r}
+#Summarizing the Mets performance
 mets_ben |>
   dplyr::summarize(
     num_years = n_distinct(yearID), 
@@ -136,6 +138,7 @@ print(mets_ben)
 ...
 
 ```{r}
+#records under each manager
 manager_summary <- mets_ben %>%
   group_by(gm) %>%
   dplyr::summarize(
