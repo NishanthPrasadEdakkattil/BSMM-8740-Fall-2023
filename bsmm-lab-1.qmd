@@ -2,7 +2,7 @@
 title: "BSMM-lab-1"
 subtitle: "BSMM 8740 Fall 2023"
 author: "Nishanth Prasad Edakkattil"
-date: "September 18"
+date: "22/09/2023"
 format: html
 editor: visual
 self-contained: true
@@ -15,8 +15,7 @@ Load packages and data:
 ```{r load-pkg-data}
 #| message: false
 # install the package 'Lahman'
-install.packages('Lahman')
-install.packages("tidyverse")
+#install the package 'tidyverse'
 library(tidyverse)
 # load the package
 library(Lahman)
@@ -46,9 +45,10 @@ my_mets |>
 ```
 
 ### Exercise 3
+
 ```{r}
 mets_ben <- Teams |>
-  dplyr::select(yearID,teamID,G,RA,RS=R,W) |>
+  dplyr::select(yearID,teamID,G,RA,RS=R,W,L) |>
   dplyr::filter(teamID== "NYN" & yearID %in% 2004:2012)
 mets_ben
 ```
@@ -56,18 +56,18 @@ mets_ben
 ...
 
 ### Exercise 4
+
 ```{r}
 mets_ben <- mets_ben |>
   dplyr::mutate(WPct = (1/(1+(RA/RS)^2)),WinPct = (W/G))
 mets_ben
 
 mets_ben <- mets_ben |>
-  dplyr::mutate(W_hat = WPct*G)
+  dplyr::mutate(W_hat =WPct*G)
 mets_ben
 ```
 
-```
-
+```         
 
 ```
 
@@ -77,22 +77,73 @@ mets_ben
 
 ...
 
+```{r}
+dplyr::filter(mets_ben,WPct>WinPct)
+```
+```{r}
+dplyr::filter(mets_ben,WPct<WinPct)
+```
+
+
 ### Exercise 6
 
 ...
+
+```{r}
+dplyr::arrange(mets_ben, WinPct)
+```
 
 ### Exercise 7
 
 ...
 
+```{r}
+mets_ben <- mets_ben |>
+dplyr::mutate(Diff = max(W_hat)-W_hat) |>
+dplyr::arrange(Diff)
+print (mets_ben)
+```
+
 ### Exercise 8
 
 ...
 
-### Exercise 9
-
-...
+```{r}
+mets_ben |>
+  dplyr::summarize(
+    num_years = n_distinct(yearID), 
+    total_W = sum(W), 
+    total_L = sum(L), 
+    total_WPct = mean(WinPct),
+    sum_resid = sum(Diff)
+  )
+```
 
 ### Exercise 10
 
 ...
+
+```{r}
+mets_ben <- mets_ben %>% 
+  dplyr::mutate(gm = ifelse(yearID == 2004,"Jim Duquette", 
+         ifelse(yearID >= 2005 & yearID <= 2010,"Omar Minaya","Sandy Alderson"
+         )))
+print(mets_ben)
+```
+
+### Exercise 11
+
+...
+
+```{r}
+manager_summary <- mets_ben %>%
+  group_by(gm) %>%
+  dplyr::summarize(
+    num_years = n(),
+    total_W = sum(W),
+    total_L = sum(L),
+    total_WPct = mean(WPct),
+    sum_resid = sum(Diff)
+  )
+print(manager_summary)
+```
